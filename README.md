@@ -1,4 +1,4 @@
-# 🐓 CrossyRoad
+# 🐓 Crossy Road
 
 Crossy Road coded in Pascal by Luc PREVOST.
 
