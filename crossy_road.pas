@@ -131,13 +131,13 @@ var K:TKeyEvent;
 
 begin
 	InitKeyBoard();
-	delay(3); {To take into account the procedure in the "repeat loop"'}
+	delay(3); {to take into account the procedure in the "repeat loop"'}
 	if keypressed then 
 		repeat
 			K:=GetKeyEvent();
 			K:=TranslateKeyEvent(K);
 			if (KeyEventToString(K) = 'Up') and (posy>1) and (tab1[posx,posy-1]<>1) then
-			begin {Condition if we hit a car or fall into water}
+			begin {condition if we hit a car or fall into water}
 				if (tab1[posx,posy-1]=2) or ((tab2[1,posy-1]=2) and (tab1[posx,posy-1]=7)) then
 					victoire:=false;
 				tab1[posx,posy]:=7;
@@ -146,7 +146,7 @@ begin
 				score:=score+1;
 			end
 			else if (KeyEventToString(K) = 'Down') and (posy<hauteurmax) and (tab1[posx,posy+1]<>1) then
-			begin {Condition if we hit a car or fall into water}
+			begin {condition if we hit a car or fall into water}
 				if (tab1[posx,posy-1]=2) or ((tab2[1,posy-1]=2) and (tab1[posx,posy-1]=7)) then
 					victoire:=false;
 				tab1[posx,posy]:=7;
