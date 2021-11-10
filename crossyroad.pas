@@ -1,13 +1,14 @@
+// Crossy Road coded in Pascal by Luc PREVOST, 2017
 program crossyroad;
 
-uses crt {couleur,goto}, keyboard {lire une touche}, dos {temps}, sysutils {fichier};
+uses crt {color,goto}, keyboard {read input}, dos {time}, sysutils {file};
 
-const largeurmax=13;{largeurmax>12}
-	hauteurmax=13;{hauteurmax>=largeurmax}
+const largeurmax=13;{width max>12}
+	hauteurmax=13;{height max>=width max}
 	proportionvoiture=7;
 	proportionarbre=4;
-	proportiontronc=5;{proportiontronc>2}
-	maxse=3; {max score enregistés}
+	proportiontronc=5;{trunc proportion>2}
+	maxse=3; {max saved score}
 
 type tab=array [1..largeurmax,1..hauteurmax] of integer;
 
@@ -16,7 +17,7 @@ Type score1=record
 	scorenbr:array[1..maxse] of integer;
 end;
 
-//Chose color
+// Chose color
 procedure choixcouleur(var couleur:char);
 
 var c:integer;
@@ -24,12 +25,12 @@ var c:integer;
 
 begin
 	InitKeyBoard();
-	writeln('Choisisez votre couleur :');
+	writeln('Choose your color :');
 	writeln('');
-	writeln('Blanc [ ]');
-	writeln('Bleu  [ ]');
+	writeln('White [ ]');
+	writeln('Blue  [ ]');
 	writeln('');
-	writeln('Touche ESPACE pour selectioner.');
+	writeln('*Type SPACE BAR to select*');
 	gotoxy(8,3);
 	c:=1;
 	
@@ -47,33 +48,33 @@ begin
 	if c=4 then couleur:='b';
 end;
 
-//initialize grid
+// Initialize grid
 procedure initialisationgrille(var tab1,tab2:tab; var posx,posy:integer);
 
 var i,j,x:integer;
 
 begin
 	randomize;
-	{pour tab2}
+	{for tab2}
 	for i:=1 to hauteurmax-2 do
 	begin
-		tab2[1,i]:=random(3); {0:herbe,1:route,2:riviere}
-		if tab2[1,i]=1 then tab2[2,i]:=random(2); {0:gauche,1:droite}
-		if (tab2[1,i]=2) and (tab2[1,i+1]<>2) then tab2[2,i]:=random(2); {pour que les troncs se croisent}
-		if (tab2[1,i]=2) and (tab2[1,i+1]=2) and (tab2[2,i+1]=1) then tab2[2,i]:=0; {avec les troncs et les voitures}
+		tab2[1,i]:=random(3); {0:grass,1:road,2:river}
+		if tab2[1,i]=1 then tab2[2,i]:=random(2); {0:left,1:right}
+		if (tab2[1,i]=2) and (tab2[1,i+1]<>2) then tab2[2,i]:=random(2); {To avoid trunc cross eachother}
+		if (tab2[1,i]=2) and (tab2[1,i+1]=2) and (tab2[2,i+1]=1) then tab2[2,i]:=0; {with truncs and cars}
 		if (tab2[1,i]=2) and (tab2[1,i+1]=2) and (tab2[2,i+1]=0) then tab2[2,i]:=1;
 	end;
 	tab2[1,hauteurmax]:=0;
 	tab2[1,hauteurmax-1]:=0;
 	
-	{pour tab1}
+	{for tab1}
 	for i:=1 to hauteurmax-2 do
 	begin
 		case tab2[1,i] of
 		0:begin
 			for j:=1 to largeurmax do
 			begin
-				x:=random(proportionarbre);{0:personnage,1:arbre,2:voiture,3:tronc,7:rien}
+				x:=random(proportionarbre);{0:character,1:tree,2:car,3:trunc,7:void}
 				if x=1 then tab1[j,i]:=1 else tab1[j,i]:=7;
 			end;
 		end;
@@ -99,7 +100,7 @@ begin
 	tab1[posx,posy]:=0
 end;
 
-//display grid
+// Display grid
 procedure affichagegrille(tab1,tab2:tab; couleur:char);
 
 var col,lin:integer;
@@ -123,20 +124,20 @@ begin
 	textbackground(black);
 end;
 
-//displacement
+// Displacement
 procedure deplacement(tab2:tab; var posx,posy,score:integer; var tab1:tab; var victoire:boolean);
 
 var K:TKeyEvent;
 
 begin
 	InitKeyBoard();
-	delay(3); {obligatoire pour que la procedure soit prise en compte dans la boucle repeat dans jeu}
+	delay(3); {To take into account the procedure in the "repeat loop"'}
 	if keypressed then 
 		repeat
 			K:=GetKeyEvent();
 			K:=TranslateKeyEvent(K);
 			if (KeyEventToString(K) = 'Up') and (posy>1) and (tab1[posx,posy-1]<>1) then
-			begin {Condition si on rentre dans une voiture ou on tombe dans l'eau}
+			begin {Condition if we hit a car or fall into water}
 				if (tab1[posx,posy-1]=2) or ((tab2[1,posy-1]=2) and (tab1[posx,posy-1]=7)) then
 					victoire:=false;
 				tab1[posx,posy]:=7;
@@ -145,7 +146,7 @@ begin
 				score:=score+1;
 			end
 			else if (KeyEventToString(K) = 'Down') and (posy<hauteurmax) and (tab1[posx,posy+1]<>1) then
-			begin {Condition si on rentre dans une voiture ou on tombe dans l'eau}
+			begin {Condition if we hit a car or fall into water}
 				if (tab1[posx,posy-1]=2) or ((tab2[1,posy-1]=2) and (tab1[posx,posy-1]=7)) then
 					victoire:=false;
 				tab1[posx,posy]:=7;
@@ -172,14 +173,14 @@ begin
 	DoneKeyBoard();
 end;
 
-//shift grid
+// Shift grid
 procedure decalagegrille(var tab1,tab2:tab; var posy:integer);
 
 var i,j,k,x:integer;
 
 begin
 	randomize;
-	{pour tab2}
+	{for tab2}
 	for i:=hauteurmax downto 2 do for j:=1 to 2 do tab2[j,i]:=tab2[j,i-1];
 	tab2[1,1]:=random(3);
 	if tab2[1,1]=1 then tab2[2,1]:=random(2);
@@ -187,15 +188,15 @@ begin
 	if (tab2[1,i]=2) and (tab2[1,i+1]=2) and (tab2[2,i+1]=1) then tab2[2,i]:=0;
 	if (tab2[1,i]=2) and (tab2[1,i+1]=2) and (tab2[2,i+1]=0) then tab2[2,i]:=1;
 	
-	{pour tab1}
+	{for tab1}
 	for i:=hauteurmax downto 2 do
 		for j:=1 to largeurmax do tab1[j,i]:=tab1[j,i-1];
 	
-	case ab2[1,1] of
+	case tab2[1,1] of
 	0:begin
 		for k:=1 to largeurmax do
 		begin
-			x:=random(proportionarbre);{0:personnage,1:arbre,2:voiture,7:rien}
+			x:=random(proportionarbre);{0:character,1:tree,2:car,7:void}
 			if x=1 then tab1[k,1]:=1 else tab1[k,1]:=7;
 		end;
 	end;
@@ -213,6 +214,7 @@ begin
 			if x>2 then tab1[k,1]:=3 else tab1[k,1]:=7;
 		end;
 	end;
+	end;
 	
 	posy:=posy+1;
 end;
@@ -226,8 +228,8 @@ begin
 	randomize;
 	for i:=1 to hauteurmax do
 	begin
-		if tab2[1,i]=1 then {pour les voitures}
-			if tab2[2,i]=1 then {vers la droite}
+		if tab2[1,i]=1 then {for cars}
+			if tab2[2,i]=1 then {toward right}
 			begin
 				for j:=largeurmax downto 2 do
 				begin
@@ -241,7 +243,7 @@ begin
 				if x=2 then tab1[1,i]:=2;
 			end
 		else
-		begin {vers la gauche}
+		begin {toward left}
 			for j:=1 to largeurmax-1 do
 			begin
 				if (tab1[j,i]=0) and (tab1[j+1,i]=2) then
@@ -254,8 +256,8 @@ begin
 			if x=2 then tab1[largeurmax,i]:=2;
 		end;
 		
-		if tab2[1,i]=2 then {pour les troncs}
-			if tab2[2,i]=1 then {vers la droite}
+		if tab2[1,i]=2 then {for truncs}
+			if tab2[2,i]=1 then {toward right}
 			begin
 				if tab1[largeurmax,i]=0 then victoire:=false;
 				if (tab2[1,posy]=2) and (tab2[2,posy]=1) then posx:=posx+1;
@@ -265,7 +267,7 @@ begin
 				if x>2 then tab1[1,i]:=3;
 			end
 		else
-		begin {vers la gauche}
+		begin {toward left}
 			if tab1[1,i]=0 then victoire:=false;
 			if (tab2[1,posy]=2) and (tab2[2,posy]=0) then posx:=posx-1;
 			for j:=1 to largeurmax-1 do tab1[j,i]:=tab1[j+1,i];
@@ -276,7 +278,7 @@ begin
 	end;
 end;
 
-//menu
+// Menu
 procedure menu(var gojeu,goscore,goregles:boolean);
 
 var c:integer;
@@ -288,14 +290,14 @@ Begin
 	goscore:=false;
 	goregles:=false;
 	
-	writeln('CROSSYROAD par NINJA7V');
+	writeln('CROSSYROAD by Luc PREVOST');
 	writeln('');
-	{liste des choix}
-	writeln('Jouer  [ ]');
+	{choices list}
+	writeln('Play   [ ]');
 	writeln('Scores [ ]');
-	writeln('Regles [ ]');
+	writeln('Rules  [ ]');
 	writeln('');
-	writeln('Touche ESPACE pour selectioner.');
+	writeln('*Type SPACE BAR to select*');
 	gotoxy(9,3);
 	c:=1;
 	
@@ -315,7 +317,7 @@ Begin
 	if (c=5) then goregles:=true;
 End;
 
-//rules
+// Rules
 procedure regles (var retour:integer);
 
 var	tab1,tab2:tab;
@@ -329,23 +331,23 @@ begin
 	initialisationgrille(tab1,tab2,posx,posy);
 	affichagegrille(tab1,tab2,couleur);
 	writeln('');
-	writeln('Crossy Road est un jeu sans fin, en theorie =D');
-	writeln('Les lignes vertes representent de l herbe.');
-	writeln('Les lignes noires representent des routes.');
-	writeln('Les lignes bleues representent des rivieres.');
-	writeln('Les carres jaunes represententent des arbres ou des troncs.');
-	writeln('Les carres rouges representent des voitures.');
-	writeln('Il faut donc eviter les voitures et ne pas tomber dans l eau !');
-	writeln('Attention a ne pas prendre trop de temps entre chaque coups.');
-	writeln('De plus, la vitesse de jeu augmentera en fonction de ton score ...');
-	writeln('Si ce dernier fais partit du top ',maxse,', alors il sera enregistre.');
+	writeln('Crossy Road is an endless game, in theory :)');
+	writeln('Green lines represents grass.');
+	writeln('Black lines represents roads.');
+	writeln('Blue lines represents riviers.');
+	writeln('yellow squares represents tree or truncs.');
+	writeln('red squares represents cars.');
+	writeln('You have to avoid car and not falling into water.');
+	writeln('Be carefull not being to slow !');
+	writeln('The speed of the game rise up in function of your score.');
+	writeln('If your score in among the top ',maxse,', then it will be save.');
 	writeln('');
-	writeln('Tu peux mettre PAUSE en apuyant sur n importe quelle touche.');
+	writeln('You can pause the game pressing any key.');
 	writeln('');
 	writeln('Menu [ ]');
 	writeln('Exit [ ]');
 	writeln('');
-	writeln('Touche ESPACE pour selectioner.');
+	writeln('*Type SPACE BAR to select*');
 	pos:=wherey;
 	gotoxy(7,pos-4);
 	c:=1;
@@ -365,7 +367,7 @@ begin
 	if (c=pos-3) then retour:=1;
 end;
 
-//save score
+// Save score
 procedure enregistrementscore(score:integer); 
 
 var tabscore:score1;
@@ -375,9 +377,9 @@ var tabscore:score1;
 	
 begin
 	{creation du fichier score}
-	if not (FileExists('fichierscorescrossyroad')) then
+	if not (FileExists('scores_crossyroad.txt')) then
 	begin
-		assign(classement, 'fichierscorescrossyroad');
+		assign(classement, 'scores_crossyroad.txt');
 		rewrite(classement);
 		for i:=1 to maxse do
 		begin
@@ -388,7 +390,7 @@ begin
 		close(classement);
 	end;
 	
-	assign(classement, 'fichierscorescrossyroad');
+	assign(classement, 'scores_crossyroad.txt');
 	reset(classement);
 	Read(classement, tabscore);
 	
@@ -425,7 +427,7 @@ var classement:file of score1;
 
 Begin
 	clrscr;
-	assign(classement, 'fichierscorescrossyroad');
+	assign(classement, 'scores_crossyroad.txt');
 	reset(classement);
 	Read(classement, tabscore);
 	
@@ -442,29 +444,29 @@ Begin
 	close(classement);
 	writeln('');
 	{liste des choix}
-	writeln('Reinitialiser les scores [ ]');
-	writeln('Menu                     [ ]');
-	writeln('Quiter                   [ ]');
+	writeln('Reset scores [ ]');
+	writeln('Menu         [ ]');
+	writeln('Quiter       [ ]');
 	writeln('');
-	writeln('Press SPACEBAR to select.');
+	writeln('*Type SPACE BAR to select*');
 	pos:=wherey;
-	gotoxy(27,wherey-5);
+	gotoxy(15,wherey-5);
 	c:=1;
 	InitKeyBoard();
 	repeat
 		K:=GetKeyEvent();
 		K:=TranslateKeyEvent(K);
 		if ((KeyEventToString(K) = 'Up') and (wherey>pos-5)) then
-			GotoXY(27,wherey-1);
+			GotoXY(15,wherey-1);
 		if ((KeyEventToString(K) = 'Down') and (wherey<pos-3))then
-			GotoXY(27,wherey+1);
+			GotoXY(15,wherey+1);
 		c:=wherey;
 	until (KeyEventToString(K) = ' ');
 	
 	DoneKeyBoard();
 	if (c=pos-5) then
 	begin 
-		assign(classement, 'fichierscorescrossyroad');
+		assign(classement, 'scores_crossyroad.txt');
 		reset(classement);
 		rewrite(classement);
 		for i:=1 to maxse do
@@ -479,7 +481,7 @@ Begin
 	if (c=pos-3) then retour:=1;
 End;
 
-//game
+// Game
 procedure jeu(var tab1,tab2:tab; var score,retour:integer; var victoire:boolean);
 
 var posay,delai,posx,posy,pos,c1,score1:integer;
@@ -517,7 +519,7 @@ begin
 		
 		depacementobjet(tab2,posy,posx,tab1,victoire);
 		if score=score1 then delai:=delai+1 else delai:=0;
-		{delai maximum pour monter}
+		{maximum delay to go up}
 		if delai=10 then victoire:=false;
 		score1:=score;
 	until (victoire=false);
@@ -532,7 +534,7 @@ begin
 	writeln('Menu [ ]');
 	writeln('Exit [ ]');
 	writeln('');
-	writeln('Touche ESPACE pour selectioner.');
+	writeln('*Type SPACE BAR to select*');
 	pos:=wherey;
 	gotoxy(7,pos-4);
 	c1:=pos-4;
@@ -551,7 +553,7 @@ begin
 end;
 
 
-//main program
+// Main
 var	tab1,tab2:tab;
 	gojeu,goscore,goregles,victoire:boolean;
 	retour,score:integer;
