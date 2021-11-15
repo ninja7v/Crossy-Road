@@ -18,7 +18,7 @@ To execute it, compile the _CrossyRoad.pas_ file and run it. After launching the
 ## ⚙️Menu
 ![crossyroad_menu](https://user-images.githubusercontent.com/52052772/141143262-00c493f7-c4a5-4fea-95ac-0e3a9cf1fac1.png)
 
-Everything happens in the terminal. Select the option you want using ↑ and ↓ arrows (or '8' and '2' keys if the VERR NUM buton is desactivated), then press **SPACE BAR** to validate. Any other key won't do anything.
+Everything happens in the terminal. Select the option you want using ↑ and ↓ arrows (or '8' and '2' keys if the **VERR NUM** buton is desactivated), then press **SPACE BAR** to validate. Any other key won't do anything.
 
 ## 📏 Rules
 ![crossyroad_rules](https://user-images.githubusercontent.com/52052772/141146355-2f0eddc7-0727-4d1b-99ca-f73ad0d2f22e.png)
