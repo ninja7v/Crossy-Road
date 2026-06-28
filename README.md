@@ -1,6 +1,6 @@
-# 🐓 Crossy Road
+This was one of my first programming projects (in 2016). I’m leaving it here for nostalgia.
 
-**Crossy Road coded in Pascal by Luc PREVOST.**
+# 🐓 Crossy Road
 
 ![crossyroad_game](https://user-images.githubusercontent.com/52052772/141143317-43ddc730-fc83-413f-8335-7ee5c77a498e.png)
 
